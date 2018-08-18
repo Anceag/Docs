@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model IEnumerable<Document>
+
+<a asp-action="Create">Create new document</a>
+
+@foreach (Document doc in Model)
+{
+    <div>
+        <a asp-action="Document" asp-route-id="@doc.Id">@doc.Name</a>
+    </div>
+}
