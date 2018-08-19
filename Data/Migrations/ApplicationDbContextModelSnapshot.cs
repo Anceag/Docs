@@ -71,8 +71,6 @@ namespace Docs.Data.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<bool>("View");
-
                     b.HasKey("Id");
 
                     b.ToTable("MembersRoles");

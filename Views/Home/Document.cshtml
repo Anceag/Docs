@@ -3,7 +3,12 @@
 }
 @model Document
 
-<textarea id="text" name="text" style="width: 300px; height: 200px">@Model.Content</textarea>
+<div>
+    <textarea id="text" name="text" style="width: 300px; height: 200px">@Model.Content</textarea>
+</div>
+<div>
+    <a asp-action="DeleteDocument" asp-route-id="@Model.Id">Delete</a>
+</div>
 
 @section Scripts{
     <script>

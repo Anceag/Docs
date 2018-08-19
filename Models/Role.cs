@@ -13,8 +13,6 @@ namespace Docs.Models
         [Required]
         public string Name { get; set; }
         [Required]
-        public bool View { get; set; }
-        [Required]
         public bool Edit { get; set; }
         [Required]
         public bool Delete { get; set; }

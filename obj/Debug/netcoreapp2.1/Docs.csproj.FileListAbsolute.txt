@@ -32,3 +32,4 @@ E:\Other\nure\GL\Docs\Docs\obj\Debug\netcoreapp2.1\Docs.csproj.CopyComplete
 E:\Other\nure\GL\Docs\Docs\obj\Debug\netcoreapp2.1\Docs.csprojAssemblyReference.cache
 E:\Other\nure\GL\Docs\Docs\obj\Debug\netcoreapp2.1\Razor\Views\Home\Document.g.cshtml.cs
 E:\Other\nure\GL\Docs\Docs\obj\Debug\netcoreapp2.1\Razor\Views\Home\Create.g.cshtml.cs
+E:\Other\nure\GL\Docs\Docs\obj\Debug\netcoreapp2.1\Razor\Views\Home\DeleteDocument.g.cshtml.cs

@@ -28,14 +28,32 @@ namespace Docs.Controllers
 
         public IActionResult Document(int id)
         {
-            return View(db.Documents.First(d => d.Id == id));
+            return View(GetDocumentById(id));
         }
 
         [HttpPost]
         public void DocumentChange(Document doc)
         {
-            db.Documents.First(d => d.Id == doc.Id).Content = doc.Content;
+            GetDocumentById(doc.Id).Content = doc.Content;
             db.SaveChanges();
+        }
+
+        [HttpGet]
+        public IActionResult DeleteDocument(int id)
+        {
+            return View(GetDocumentById(id));
+        }
+        [HttpPost]
+        public IActionResult DeleteDocument(string name, int id)
+        {
+            Document doc = GetDocumentById(id);
+            if (name == doc.Name)
+            {
+                db.Documents.Remove(doc);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(doc);
         }
 
         [HttpGet]
@@ -59,6 +77,8 @@ namespace Docs.Controllers
 
         private string GetUserId(string name) =>
             db.Users.First(u => name == u.UserName).Id;
+        private Document GetDocumentById(int id) =>
+            db.Documents.First(d => d.Id == id);
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

@@ -1,0 +1,11 @@
+﻿@{
+    ViewData["Title"] = "DeleteDocument";
+}
+@model Document
+
+<h2>Deleting document @Model.Name</h2>
+<form method="post">
+    <label>Enter the name of a document</label>
+    <input type="text" name="name" value="" />
+    <input type="submit" value="Delete" />
+</form>
