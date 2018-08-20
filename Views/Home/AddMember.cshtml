@@ -1,0 +1,9 @@
+﻿@model DocumentMember
+
+@if (Model != null)
+{
+    <tr>
+        <td>@Model.User.UserName</td>
+        <td>@Model.Role.Name </td>
+    </tr>
+}

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Docs.Models;
 using Docs.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace Docs.Controllers
 {
@@ -22,7 +23,7 @@ namespace Docs.Controllers
 
         public IActionResult Index()
         {
-            string userId = GetUserId(User.Identity.Name);
+            string userId = GetUserIdByName(User.Identity.Name);
             return View(db.Documents.Where(d => d.UserId == userId));
         }
 
@@ -66,7 +67,7 @@ namespace Docs.Controllers
         {
             if (ModelState["Name"].Errors.Count == 0)
             {
-                doc.UserId = GetUserId(User.Identity.Name);
+                doc.UserId = GetUserIdByName(User.Identity.Name);
                 doc.Content = string.Empty;
                 db.Documents.Add(doc);
                 db.SaveChanges();
@@ -75,10 +76,35 @@ namespace Docs.Controllers
             return View();
         }
 
-        private string GetUserId(string name) =>
-            db.Users.First(u => name == u.UserName).Id;
+        [HttpGet]
+        public IActionResult Members(int id)
+        {
+            var t = new Tuple<int, IEnumerable<DocumentMember>, IEnumerable<Role>>(id, 
+                db.DocumentMembers.Where(m => m.DocumentId == id).Include(m => m.User).Include(m => m.Role),
+                db.MembersRoles);
+            return View(t);
+        }
+        [HttpPost]
+        public IActionResult AddMember(DocumentMember m, string userName)
+        {
+            m.UserId = GetUserIdByName(userName);
+            if (m.UserId != null && db.DocumentMembers.FirstOrDefault(dm => dm.UserId == m.UserId) == null)
+            {
+                db.DocumentMembers.Add(m);
+                db.SaveChanges();
+
+                m.User = db.Users.First(u => u.Id == m.UserId);
+                m.Role = db.MembersRoles.First(r => r.Id == m.RoleId);
+                return PartialView(m);
+            }
+            return PartialView(null);
+        }
+
+        private string GetUserIdByName(string name) =>
+            db.Users.FirstOrDefault(u => name == u.UserName)?.Id;
+
         private Document GetDocumentById(int id) =>
-            db.Documents.First(d => d.Id == id);
+            db.Documents.FirstOrDefault(d => d.Id == id);
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

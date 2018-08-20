@@ -1,0 +1,60 @@
+﻿@model Tuple<int, IEnumerable<DocumentMember>, IEnumerable<Role>>
+
+@{
+    ViewData["Title"] = "Members";
+}
+
+<h2>Members</h2>
+
+<div>
+    <a asp-action="Document" asp-route-id="@Model.Item1">Back to document</a>
+</div>
+
+<div>
+    <input type="text" id="userName" />
+    <select id="roleSelect">
+        @foreach (Role r in Model.Item3)
+        {
+            <option value="@r.Id">@r.Name</option>
+        }
+    </select>
+    <input type="button" onclick="addMember()" />
+</div>
+
+<table class="table-condensed">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Role</th>
+        </tr>
+    </thead>
+    <tbody  id="membersTable">
+        @foreach (var member in Model.Item2)
+        {
+            <tr>
+                <td>@member.User.UserName</td>
+                <td>@member.Role.Name </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts{
+    <script>
+        function addMember() {
+            var roleSelect = document.getElementById("roleSelect");
+            $.ajax({
+                url: "@Url.Action("AddMember", "Home")",
+                type: "POST",
+                data: {
+                    DocumentId: @Model.Item1,
+                    UserName: document.getElementById("userName").value,
+                    RoleId: roleSelect.options[roleSelect.options.selectedIndex].value
+                },
+                success: function (data) {
+                    $("#membersTable").append(data);
+                }
+            });
+        }
+    </script>
+}

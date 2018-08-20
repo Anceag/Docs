@@ -33,3 +33,5 @@ E:\Other\nure\GL\Docs\Docs\obj\Debug\netcoreapp2.1\Docs.csprojAssemblyReference.
 E:\Other\nure\GL\Docs\Docs\obj\Debug\netcoreapp2.1\Razor\Views\Home\Document.g.cshtml.cs
 E:\Other\nure\GL\Docs\Docs\obj\Debug\netcoreapp2.1\Razor\Views\Home\Create.g.cshtml.cs
 E:\Other\nure\GL\Docs\Docs\obj\Debug\netcoreapp2.1\Razor\Views\Home\DeleteDocument.g.cshtml.cs
+E:\Other\nure\GL\Docs\Docs\obj\Debug\netcoreapp2.1\Razor\Views\Home\Members.g.cshtml.cs
+E:\Other\nure\GL\Docs\Docs\obj\Debug\netcoreapp2.1\Razor\Views\Home\AddMember.g.cshtml.cs
