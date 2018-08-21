@@ -18,7 +18,7 @@
             <option value="@r.Id">@r.Name</option>
         }
     </select>
-    <input type="button" onclick="addMember()" />
+    <input type="button" onclick="addMember()" value="Add member" />
 </div>
 
 <table class="table-condensed">
@@ -28,12 +28,11 @@
             <th>Role</th>
         </tr>
     </thead>
-    <tbody id="membersTable">
-    </tbody>
+    <tbody id="membersTable"></tbody>
 </table>
 
 @section Scripts{
-<script>
+    <script>
         function addMember() {
             var roleSelect = document.getElementById("roleSelect");
             $.ajax({
@@ -52,16 +51,33 @@
         }
 
         $(function () {
+            createMembersTable();
+        });
+
+        function createMembersTable() {
             @foreach (var member in Model.Item2)
             {
                 <text>addMemberRow({ userName: "@member.User.UserName", roleName: "@member.Role.Name" });</text>
             }
-        });
-
-        function addMemberRow(data) {
-            $("#membersTable").append("<tr><td>" + data.userName +
-                "</td><td>" + data.roleName +
-                "</td><td><input type='button' value='Delete'></td></tr>");
         }
-</script>
+        function addMemberRow(data) {
+            $("#membersTable").append("<tr id='member" + data.userName + "'><td>" + data.userName +
+                "</td><td>" + data.roleName +
+                "</td><td><input type='button' value='Delete' onclick='deleteMember(\"" + data.userName + "\")'></td></tr>");
+        }
+
+        function deleteMember(userName) {
+            $.ajax({
+                url: "@Url.Action("DeleteMember", "Home")",
+                type: "POST",
+                data: {
+                    documentId: @Model.Item1,
+                    userName: userName
+                },
+                success: function (data) {
+                    $("[id='memberaaa@aaa.aaa']").remove();
+                }
+            });
+        }
+    </script>
 }

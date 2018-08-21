@@ -100,6 +100,13 @@ namespace Docs.Controllers
             }
             return null;
         }
+        [HttpPost]
+        public void DeleteMember(int documentId, string userName)
+        {
+            string userId = GetUserIdByName(userName);
+            db.DocumentMembers.Remove(db.DocumentMembers.First(m => m.DocumentId == documentId && m.UserId == userId));
+            db.SaveChanges();
+        }
 
         private string GetUserIdByName(string name) =>
             db.Users.FirstOrDefault(u => name == u.UserName)?.Id;
