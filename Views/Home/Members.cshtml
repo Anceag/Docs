@@ -28,33 +28,40 @@
             <th>Role</th>
         </tr>
     </thead>
-    <tbody  id="membersTable">
-        @foreach (var member in Model.Item2)
-        {
-            <tr>
-                <td>@member.User.UserName</td>
-                <td>@member.Role.Name </td>
-            </tr>
-        }
+    <tbody id="membersTable">
     </tbody>
 </table>
 
 @section Scripts{
-    <script>
+<script>
         function addMember() {
             var roleSelect = document.getElementById("roleSelect");
             $.ajax({
                 url: "@Url.Action("AddMember", "Home")",
                 type: "POST",
                 data: {
-                    DocumentId: @Model.Item1,
-                    UserName: document.getElementById("userName").value,
-                    RoleId: roleSelect.options[roleSelect.options.selectedIndex].value
+                    documentId: @Model.Item1,
+                    userName: document.getElementById("userName").value,
+                    roleId: roleSelect.options[roleSelect.options.selectedIndex].value
                 },
                 success: function (data) {
-                    $("#membersTable").append(data);
+                    if (data != undefined)
+                        addMemberRow({ userName: data.user.userName, roleName: data.role.name });
                 }
             });
         }
-    </script>
+
+        $(function () {
+            @foreach (var member in Model.Item2)
+            {
+                <text>addMemberRow({ userName: "@member.User.UserName", roleName: "@member.Role.Name" });</text>
+            }
+        });
+
+        function addMemberRow(data) {
+            $("#membersTable").append("<tr><td>" + data.userName +
+                "</td><td>" + data.roleName +
+                "</td><td><input type='button' value='Delete'></td></tr>");
+        }
+</script>
 }

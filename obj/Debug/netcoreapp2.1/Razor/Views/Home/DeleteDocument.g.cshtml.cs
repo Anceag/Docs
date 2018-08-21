@@ -73,7 +73,7 @@ using Docs.Models;
             WriteLiteral("</h2>\r\n");
             EndContext();
             BeginContext(109, 62, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "8f9b1744b30e474a8452d69b6c0d4d54", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "df7569b4057f436ea9991f7ae838d94b", async() => {
                 BeginContext(159, 8, true);
                 WriteLiteral("Document");
                 EndContext();
@@ -108,7 +108,7 @@ using Docs.Models;
             WriteLiteral("\r\n");
             EndContext();
             BeginContext(173, 170, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("form", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "8dc2d9685971445ea81f017f206e3f9e", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("form", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "0a6018d82be249f8a8626540c78b31e8", async() => {
                 BeginContext(193, 143, true);
                 WriteLiteral("\r\n    <label>Enter the name of a document</label>\r\n    <input type=\"text\" name=\"name\" value=\"\" />\r\n    <input type=\"submit\" value=\"Delete\" />\r\n");
                 EndContext();

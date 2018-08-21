@@ -71,7 +71,7 @@ using Docs.Models;
             WriteLiteral("</textarea>\r\n</div>\r\n<div>\r\n    ");
             EndContext();
             BeginContext(188, 66, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "74ccd04bd4d649aea7cd067b61716755", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "39d9ea379e434559a8d030fd54542444", async() => {
                 BeginContext(244, 6, true);
                 WriteLiteral("Delete");
                 EndContext();
@@ -106,7 +106,7 @@ using Docs.Models;
             WriteLiteral("\r\n</div>\r\n<div>\r\n    ");
             EndContext();
             BeginContext(275, 60, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "8c18c15cde924bce8d787764dafb34e3", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "0fdee9ffe3f34922ad46bd44bfcc15b5", async() => {
                 BeginContext(324, 7, true);
                 WriteLiteral("Members");
                 EndContext();

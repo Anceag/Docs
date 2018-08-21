@@ -85,19 +85,20 @@ namespace Docs.Controllers
             return View(t);
         }
         [HttpPost]
-        public IActionResult AddMember(DocumentMember m, string userName)
+        public DocumentMember AddMember(DocumentMember m, string userName)
         {
             m.UserId = GetUserIdByName(userName);
-            if (m.UserId != null && db.DocumentMembers.FirstOrDefault(dm => dm.UserId == m.UserId) == null)
+            if (m.UserId != null && 
+                db.DocumentMembers.FirstOrDefault(dm => dm.UserId == m.UserId && dm.DocumentId == m.DocumentId) == null)
             {
                 db.DocumentMembers.Add(m);
                 db.SaveChanges();
 
                 m.User = db.Users.First(u => u.Id == m.UserId);
                 m.Role = db.MembersRoles.First(r => r.Id == m.RoleId);
-                return PartialView(m);
+                return m;
             }
-            return PartialView(null);
+            return null;
         }
 
         private string GetUserIdByName(string name) =>
