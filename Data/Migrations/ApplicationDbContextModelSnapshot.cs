@@ -64,8 +64,6 @@ namespace Docs.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("Delete");
-
                     b.Property<bool>("Edit");
 
                     b.Property<string>("Name")
