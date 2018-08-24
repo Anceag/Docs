@@ -4,7 +4,7 @@
 @model Document
 
 <div>
-    <textarea id="text" name="text" style="width: 300px; height: 200px">@Model.Content</textarea>
+    <textarea id="text" name="text" style="width: 300px; height: 200px" oninput="textChange()">@Model.Content</textarea>
 </div>
 <div>
     <a asp-action="DeleteDocument" asp-route-id="@Model.Id">Delete</a>
@@ -15,18 +15,37 @@
 
 @section Scripts{
     <script>
-        $(document).ready(function () {
+        var isChanged = false;
+        var changeWaitTime = 500;
+        var timer;
+
+        function textChange() {
+            if (!isChanged) {
+                // send info about user to server
+                console.log("started changing");
+            }
+            clearTimeout(timer);
+            isChanged = true;
+            timer = setTimeout(
+                function () {
+                    isChanged = false;
+                    sendText();
+                    console.log("changes saved");
+                },
+                changeWaitTime
+            );
+        }
+
+        function sendText() {
             var textarea = $("#text");
-            textarea.change(function () {
-                $.ajax({
-                    url: "@Url.Action("DocumentChange", "Home")",
-                    type: "POST",
-                    data: {
-                        Content: textarea.val(),
-                        Id: @Model.Id
-                    }
-                });
+            $.ajax({
+                url: "@Url.Action("DocumentChange", "Home")",
+                type: "POST",
+                data: {
+                    Content: textarea.val(),
+                    Id: @Model.Id
+                }
             });
-        });
+        }
     </script>
 }

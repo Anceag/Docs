@@ -61,7 +61,7 @@ using Docs.Models;
             WriteLiteral("\r\n");
             EndContext();
             BeginContext(77, 46, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "c5f135f4c3054d7daa56eab80715fa18", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "3cfd40578923458c903d9b43e8657f14", async() => {
                 BeginContext(100, 19, true);
                 WriteLiteral("Create new document");
                 EndContext();
@@ -92,7 +92,7 @@ using Docs.Models;
             WriteLiteral("    <div>\r\n        ");
             EndContext();
             BeginContext(183, 61, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "8e4d4b214c084b5bbe7acf251108af36", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "15c2600688bf43d2b41b578a65ad51a1", async() => {
                 BeginContext(232, 8, false);
 #line 11 "E:\Other\nure\GL\Docs\Docs\Views\Home\Index.cshtml"
                                                    Write(doc.Name);
