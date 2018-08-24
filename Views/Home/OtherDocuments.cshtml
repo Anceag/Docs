@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Other documents";
+}
+@model IEnumerable<DocumentMember>
+
+@foreach (DocumentMember member in Model)
+{
+    <div>
+        <a asp-action="Document" asp-route-id="@member.Document.Id">@member.Document.Name</a>
+        <span> - @member.Role.Name</span>
+    </div>
+}

@@ -29,13 +29,31 @@ namespace Docs.Controllers
 
         public IActionResult Document(int id)
         {
-            return View(GetDocumentById(id));
+            string userId = GetUserIdByName(User.Identity.Name);
+
+            var doc = GetDocumentById(id);
+            DocumentMember member = null;
+
+            if(doc.UserId != userId)
+            {
+                member = db.DocumentMembers.FirstOrDefault(m => m.DocumentId == id && m.UserId == userId);
+                if(member == null)
+                    return NotFound();
+                member.Role = db.MembersRoles.First(r => r.Id == member.RoleId);
+            }
+
+            var t = new Tuple<Document, DocumentMember>(doc, member);
+            return View(t);
+        }
+        public string GetDocumentContent(int id)
+        {
+            return GetDocumentById(id).Content;
         }
 
         [HttpPost]
-        public void DocumentChange(Document doc)
+        public void DocumentChange(int id, string content)
         {
-            GetDocumentById(doc.Id).Content = doc.Content;
+            GetDocumentById(id).Content = content ?? string.Empty;
             db.SaveChanges();
         }
 
@@ -106,6 +124,12 @@ namespace Docs.Controllers
             string userId = GetUserIdByName(userName);
             db.DocumentMembers.Remove(db.DocumentMembers.First(m => m.DocumentId == documentId && m.UserId == userId));
             db.SaveChanges();
+        }
+
+        public IActionResult OtherDocuments()
+        {
+            string userID = GetUserIdByName(User.Identity.Name);
+            return View(db.DocumentMembers.Where(m => m.UserId == userID).Include(m => m.Document).Include(m => m.Role));
         }
 
         private string GetUserIdByName(string name) =>

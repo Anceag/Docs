@@ -1,49 +1,88 @@
 ﻿@{
     ViewData["Title"] = "Document";
 }
-@model Document
+@model Tuple<Document, DocumentMember>
 
-<div>
-    <textarea id="text" name="text" style="width: 300px; height: 200px" oninput="textChange()">@Model.Content</textarea>
-</div>
-<div>
-    <a asp-action="DeleteDocument" asp-route-id="@Model.Id">Delete</a>
-</div>
-<div>
-    <a asp-action="Members" asp-route-id="@Model.Id">Members</a>
-</div>
+@{
+    bool owner = Model.Item2 == null;
+    bool canEdit = owner || Model.Item2.Role.Edit;
+}
 
+<div>@Model.Item1.Name</div>
+<div>
+    <textarea id="text"
+              name="text"
+              style="width: 300px; height: 200px"
+              @if (canEdit) { <text> oninput="textChange()" </text> }
+              @if (!canEdit) { <text> disabled</text> }>@Model.Item1.Content</textarea>
+</div>
+@if (owner)
+{
+    <div>
+        <a asp-action="DeleteDocument" asp-route-id="@Model.Item1.Id">Delete</a>
+    </div>
+    <div>
+        <a asp-action="Members" asp-route-id="@Model.Item1.Id">Members</a>
+    </div>
+}
 @section Scripts{
     <script>
+        var textarea = $("#text");
+        var getTextTimer;
+        var getTextWaitTime = 1000;
+    @if (canEdit)
+    {
+        <text>
         var isChanged = false;
         var changeWaitTime = 500;
-        var timer;
+        var changeTextTimer;
 
         function textChange() {
             if (!isChanged) {
                 // send info about user to server
                 console.log("started changing");
             }
-            clearTimeout(timer);
+            clearTimeout(changeTextTimer);
+            clearTimeout(getTextTimer);
             isChanged = true;
-            timer = setTimeout(
-                function () {
+            changeTextTimer = setTimeout(
+                function() {
                     isChanged = false;
                     sendText();
                     console.log("changes saved");
+                    setGetTextTimer();
                 },
                 changeWaitTime
             );
         }
 
         function sendText() {
-            var textarea = $("#text");
             $.ajax({
                 url: "@Url.Action("DocumentChange", "Home")",
                 type: "POST",
                 data: {
-                    Content: textarea.val(),
-                    Id: @Model.Id
+                    id: @Model.Item1.Id,
+                    content: textarea.val()
+                }
+            });
+        }
+        </text>
+    }
+
+        $(function () {
+            setGetTextTimer();
+        });
+        function setGetTextTimer() {
+            getTextTimer = setInterval(getText, 1000);
+        }
+        function getText() {
+            $.ajax({
+                url: '@Url.Action("GetDocumentContent", "Home")',
+                type: 'GET',
+                data: { id: @Model.Item1.Id },
+                success: function (data) {
+                    textarea.val(data);
+                    console.log("new text received");
                 }
             });
         }
