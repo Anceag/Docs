@@ -16,6 +16,8 @@ namespace Docs.Controllers
     {
         private readonly DocsDbContext db;
 
+        private static readonly List<DocumentHelper> docHelpers = new List<DocumentHelper>();
+
         public HomeController(DocsDbContext db)
         {
             this.db = db;
@@ -45,15 +47,29 @@ namespace Docs.Controllers
             var t = new Tuple<Document, DocumentMember>(doc, member);
             return View(t);
         }
-        public string GetDocumentContent(int id)
+        public object GetDocumentInfo(int id)
         {
-            return GetDocumentById(id).Content;
+            return new { GetDocumentById(id).Content, changingUser = GetDocHelperById(id)?.ChangingUser?.UserName };
         }
 
         [HttpPost]
+        public void DocumentStartChange(int id)
+        {
+            var docHelper = GetDocHelperById(id);
+            if (docHelper == null)
+            {
+                docHelper = new DocumentHelper(id);
+                docHelpers.Add(docHelper);
+            }
+            docHelper.ChangingUser = db.Users.First(u => u.UserName == User.Identity.Name);
+            db.SaveChanges();
+        }
+        [HttpPost]
         public void DocumentChange(int id, string content)
         {
-            GetDocumentById(id).Content = content ?? string.Empty;
+            Document doc = GetDocumentById(id);
+            doc.Content = content ?? string.Empty;
+            GetDocHelperById(id).ChangingUser = null; // maybe it should be removed
             db.SaveChanges();
         }
 
@@ -137,6 +153,9 @@ namespace Docs.Controllers
 
         private Document GetDocumentById(int id) =>
             db.Documents.FirstOrDefault(d => d.Id == id);
+
+        private DocumentHelper GetDocHelperById(int id) =>
+            docHelpers.FirstOrDefault(d => d.DocumentId == id);
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
