@@ -5,8 +5,13 @@
 
 @foreach (DocumentMember member in Model)
 {
-    <div>
-        <a asp-action="Document" asp-route-id="@member.Document.Id">@member.Document.Name</a>
-        <span> - @member.Role.Name</span>
+    <div class="docListPart">
+        <div class="docListPartName">
+            <a asp-action="Document" asp-route-id="@member.Document.Id">@member.Document.Name</a>
+            <span> - @member.Role.Name</span>
+        </div>
+        <div class="docListPartText">
+            <span style="white-space: pre-wrap">@member.Document.Content</span>
+        </div>
     </div>
 }

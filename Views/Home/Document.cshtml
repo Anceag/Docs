@@ -8,11 +8,10 @@
     bool canEdit = owner || Model.Item2.Role.Edit;
 }
 
-<div>@Model.Item1.Name</div>
+<div class="docListPartName">@Model.Item1.Name</div>
 <div>
-    <textarea id="text"
+    <textarea id="textArea"
               name="text"
-              style="width: 300px; height: 200px"
               @if (canEdit) { <text> oninput="textChange()" </text> }
               @if (!canEdit) { <text> disabled</text> }
               >@Model.Item1.Content</textarea>
@@ -26,10 +25,13 @@
     <div>
         <a asp-action="Members" asp-route-id="@Model.Item1.Id">Members</a>
     </div>
+    <div>
+        <a asp-action="DownloadDocument" asp-route-id="@Model.Item1.Id">Download</a>
+    </div>
 }
 @section Scripts{
     <script>
-        var textarea = $("#text");
+        var textarea = $("#textArea");
         var getTextTimer;
         var getTextWaitTime = 1000;
     @if (canEdit)
@@ -42,7 +44,7 @@
         function textChange() {
             if (!isChanged) {
                 sendStartChange();
-                console.log("started changing");
+                //console.log("started changing");
             }
             clearTimeout(changeTextTimer);
             clearTimeout(getTextTimer);
@@ -51,7 +53,7 @@
                 function() {
                     isChanged = false;
                     sendText();
-                    console.log("changes saved");
+                    //console.log("changes saved");
                     setGetTextTimer();
                 },
                 changeWaitTime
@@ -97,13 +99,12 @@
                         textarea.attr("disabled", true);
                         $("#changingWarning").css("visibility", "visible");
                         $("#changingUser").text(data.changingUser);
-                    } else {
+                    } else if("@canEdit" == "True") {
                         textarea.attr("disabled", false);
                         $("#changingWarning").css("visibility", "hidden");
                     }
-                    console.log(data.changingUser);
                     textarea.val(data.content);
-                    console.log("new text received");
+                    //console.log("new text received");
                 }
             });
         }

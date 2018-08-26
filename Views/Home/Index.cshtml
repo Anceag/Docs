@@ -3,11 +3,18 @@
 }
 @model IEnumerable<Document>
 
-<a asp-action="Create">Create new document</a>
+<div id="docListUpper">
+    <input type="button" class="btn btn-default" value="Create new document" onclick="location.href = '@Url.Action("Create", "Home")'">
+</div>
 
 @foreach (Document doc in Model)
 {
-    <div>
-        <a asp-action="Document" asp-route-id="@doc.Id">@doc.Name</a>
+    <div class="docListPart">
+        <div class="docListPartName">
+            <a asp-action="Document" asp-route-id="@doc.Id">@doc.Name</a>
+        </div>
+        <div class="docListPartText">
+            <span style="white-space: pre-wrap">@doc.Content</span>
+        </div>
     </div>
 }

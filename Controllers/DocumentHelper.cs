@@ -11,7 +11,6 @@ namespace Docs.Controllers
     {
         public int DocumentId { get; set; }
         public IdentityUser ChangingUser { get; set; }
-        public List<IdentityUser> OnlineUsers { get; private set; }
 
         public DocumentHelper(int id)
         {

@@ -1,6 +1,4 @@
-﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
-for details on configuring this project to bundle and minify static web assets. */
-body {
+﻿body {
     padding-top: 50px;
     padding-bottom: 20px;
 }
@@ -34,4 +32,32 @@ body {
     .carousel-caption {
         display: none;
     }
+}
+
+#textArea {
+    width: 300px;
+    height: 200px
+}
+
+#docListUpper {
+    margin: 10px
+}
+
+.docListPart {
+    border-bottom: 2px outset lightgrey;
+    border-top: 2px inset lightgrey;
+    border-radius: 5px;
+    margin-top: 5px;
+    width: 350px;
+}
+
+.docListPartName {
+    font-size: 20px;
+    padding-left: 5px;
+}
+
+.docListPartText {
+    max-height: 60px;
+    overflow: hidden;
+    padding-left: 5px;
 }

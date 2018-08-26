@@ -8,6 +8,7 @@ using Docs.Models;
 using Docs.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace Docs.Controllers
 {
@@ -50,6 +51,18 @@ namespace Docs.Controllers
         public object GetDocumentInfo(int id)
         {
             return new { GetDocumentById(id).Content, changingUser = GetDocHelperById(id)?.ChangingUser?.UserName };
+        }
+
+        public FileStreamResult DownloadDocument(int id)
+        {
+            Document doc = GetDocumentById(id);
+
+            MemoryStream mr = new MemoryStream();
+            TextWriter tw = new StreamWriter(mr);
+            tw.Write(doc.Content);
+            tw.Flush();
+
+            return File(mr, "application/force-download", doc.Name + ".txt");
         }
 
         [HttpPost]
