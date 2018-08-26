@@ -37,10 +37,10 @@ namespace Docs.Controllers
             var doc = GetDocumentById(id);
             DocumentMember member = null;
 
-            if(doc.UserId != userId)
+            if (doc.UserId != userId)
             {
                 member = db.DocumentMembers.FirstOrDefault(m => m.DocumentId == id && m.UserId == userId);
-                if(member == null)
+                if (member == null)
                     return NotFound();
                 member.Role = db.MembersRoles.First(r => r.Id == member.RoleId);
             }
@@ -53,16 +53,16 @@ namespace Docs.Controllers
             return new { GetDocumentById(id).Content, changingUser = GetDocHelperById(id)?.ChangingUser?.UserName };
         }
 
-        public FileStreamResult DownloadDocument(int id)
+        public FileResult DownloadDocument(int id)
         {
             Document doc = GetDocumentById(id);
 
             MemoryStream mr = new MemoryStream();
             TextWriter tw = new StreamWriter(mr);
-            tw.Write(doc.Content);
+            tw.Write(doc.Content.Replace("\n", "\r\n"));
             tw.Flush();
-
-            return File(mr, "application/force-download", doc.Name + ".txt");
+            mr.Position = 0;
+            return File(mr, "text/plain", doc.Name + ".txt");
         }
 
         [HttpPost]
@@ -126,7 +126,7 @@ namespace Docs.Controllers
         [HttpGet]
         public IActionResult Members(int id)
         {
-            var t = new Tuple<int, IEnumerable<DocumentMember>, IEnumerable<Role>>(id, 
+            var t = new Tuple<int, IEnumerable<DocumentMember>, IEnumerable<Role>>(id,
                 db.DocumentMembers.Where(m => m.DocumentId == id).Include(m => m.User).Include(m => m.Role),
                 db.MembersRoles);
             return View(t);
@@ -135,7 +135,7 @@ namespace Docs.Controllers
         public DocumentMember AddMember(DocumentMember m, string userName)
         {
             m.UserId = GetUserIdByName(userName);
-            if (m.UserId != null && 
+            if (m.UserId != null &&
                 db.DocumentMembers.FirstOrDefault(dm => dm.UserId == m.UserId && dm.DocumentId == m.DocumentId) == null)
             {
                 db.DocumentMembers.Add(m);

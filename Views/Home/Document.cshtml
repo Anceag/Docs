@@ -13,8 +13,7 @@
     <textarea id="textArea"
               name="text"
               @if (canEdit) { <text> oninput="textChange()" </text> }
-              @if (!canEdit) { <text> disabled</text> }
-              >@Model.Item1.Content</textarea>
+              @if (!canEdit) { <text> disabled</text> }>@Model.Item1.Content</textarea>
 </div>
 <div style="visibility: hidden" id="changingWarning"><span id="changingUser">user_name</span> is typing.</div>
 @if (owner)
@@ -25,10 +24,11 @@
     <div>
         <a asp-action="Members" asp-route-id="@Model.Item1.Id">Members</a>
     </div>
-    <div>
-        <a asp-action="DownloadDocument" asp-route-id="@Model.Item1.Id">Download</a>
-    </div>
 }
+<div>
+    @*<a href="@Url.Action("DownloadDocument", "Home")/@Model.Item1.Id" download>Download</a>*@
+    <a asp-action="DownloadDocument" asp-route-id="@Model.Item1.Id">Download</a>
+</div>
 @section Scripts{
     <script>
         var textarea = $("#textArea");
