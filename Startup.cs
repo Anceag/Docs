@@ -1,4 +1,6 @@
 ﻿using System;
+using Docs.Services;
+using Docs.Services.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +14,8 @@ using Microsoft.EntityFrameworkCore;
 using Docs.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Docs.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Docs
 {
@@ -48,6 +52,10 @@ namespace Docs
             }).AddEntityFrameworkStores<DocsDbContext>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddSignalR();
+
+            var db = services.BuildServiceProvider().GetService<DocsDbContext>();
+            services.AddSingleton<IDocuments, Documents>(s => new Documents(db));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,6 +75,11 @@ namespace Docs
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<DocsHub>("/docsHub");
+            });
 
             app.UseAuthentication();
 

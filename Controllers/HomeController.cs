@@ -9,99 +9,82 @@ using Docs.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
+using Microsoft.AspNetCore.SignalR;
+using Docs.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace Docs.Controllers
 {
     [Authorize]
     public class HomeController : Controller
     {
-        private readonly DocsDbContext db;
+        private readonly IDocuments documents;
+        private readonly UserManager<IdentityUser> userManager;
 
-        private static readonly List<DocumentHelper> docHelpers = new List<DocumentHelper>();
-
-        public HomeController(DocsDbContext db)
+        public HomeController(IDocuments documents, UserManager<IdentityUser> userManager)
         {
-            this.db = db;
+            this.documents = documents;
+            this.userManager = userManager;
         }
 
         public IActionResult Index()
         {
-            string userId = GetUserIdByName(User.Identity.Name);
-            return View(db.Documents.Where(d => d.UserId == userId));
+            string userId = userManager.GetUserId(User);
+            return View(documents.GetDocuments(userId));
         }
 
         public IActionResult Document(int id)
         {
-            string userId = GetUserIdByName(User.Identity.Name);
-
-            var doc = GetDocumentById(id);
+            string userId = userManager.GetUserId(User);
+            var doc = documents.GetDocument(id);
             DocumentMember member = null;
 
             if (doc.UserId != userId)
             {
-                member = db.DocumentMembers.FirstOrDefault(m => m.DocumentId == id && m.UserId == userId);
+                member = documents.GetMember(userId, id);
                 if (member == null)
                     return NotFound();
-                member.Role = db.MembersRoles.First(r => r.Id == member.RoleId);
+                member.Role = documents.GetRole(member.RoleId);
             }
 
             var t = new Tuple<Document, DocumentMember>(doc, member);
             return View(t);
         }
+
         public object GetDocumentInfo(int id)
         {
-            return new { GetDocumentById(id).Content, changingUser = GetDocHelperById(id)?.ChangingUser?.UserName };
+            return new { documents.GetDocument(id).Content, changingUser = documents.GetDocumentHelper(id)?.ChangingUser?.UserName };
         }
 
         public FileResult DownloadDocument(int id)
         {
-            Document doc = GetDocumentById(id);
-
-            MemoryStream mr = new MemoryStream();
-            TextWriter tw = new StreamWriter(mr);
-            tw.Write(doc.Content.Replace("\n", "\r\n"));
-            tw.Flush();
-            mr.Position = 0;
-            return File(mr, "text/plain", doc.Name + ".txt");
+            var ms = documents.GetDocumentMemoryStream(id);
+            return File(ms, "text/plain", id + ".txt");
         }
 
         [HttpPost]
-        public void DocumentStartChange(int id)
+        public async void DocumentStartChange(int id)
         {
-            var docHelper = GetDocHelperById(id);
-            if (docHelper == null)
-            {
-                docHelper = new DocumentHelper(id);
-                docHelpers.Add(docHelper);
-            }
-            docHelper.ChangingUser = db.Users.First(u => u.UserName == User.Identity.Name);
-            db.SaveChanges();
+            var docHelper = documents.GetDocumentHelper(id);
+            docHelper.ChangingUser = await userManager.GetUserAsync(User);
         }
         [HttpPost]
         public void DocumentChange(int id, string content)
         {
-            Document doc = GetDocumentById(id);
-            doc.Content = content ?? string.Empty;
-            GetDocHelperById(id).ChangingUser = null; // maybe it should be removed
-            db.SaveChanges();
+            documents.SetDocumentContent(id, content);
         }
 
         [HttpGet]
         public IActionResult DeleteDocument(int id)
         {
-            return View(GetDocumentById(id));
+            return View(documents.GetDocument(id));
         }
         [HttpPost]
         public IActionResult DeleteDocument(string name, int id)
         {
-            Document doc = GetDocumentById(id);
-            if (name == doc.Name)
-            {
-                db.Documents.Remove(doc);
-                db.SaveChanges();
+            if (documents.DeleteDocument(name, id))
                 return RedirectToAction("Index");
-            }
-            return View(doc);
+            return View(id);
         }
 
         [HttpGet]
@@ -114,11 +97,8 @@ namespace Docs.Controllers
         {
             if (ModelState["Name"].Errors.Count == 0)
             {
-                doc.UserId = GetUserIdByName(User.Identity.Name);
-                doc.Content = string.Empty;
-                db.Documents.Add(doc);
-                db.SaveChanges();
-                return RedirectToAction("Document", new { Id = doc.Id });
+                int id = documents.AddDocument(doc.Name, userManager.GetUserId(User)).Id;
+                return RedirectToAction("Document", new { Id = id });
             }
             return View();
         }
@@ -127,48 +107,25 @@ namespace Docs.Controllers
         public IActionResult Members(int id)
         {
             var t = new Tuple<int, IEnumerable<DocumentMember>, IEnumerable<Role>>(id,
-                db.DocumentMembers.Where(m => m.DocumentId == id).Include(m => m.User).Include(m => m.Role),
-                db.MembersRoles);
+                documents.GetDocumentMembers(id),
+                documents.Roles);
             return View(t);
         }
         [HttpPost]
         public DocumentMember AddMember(DocumentMember m, string userName)
         {
-            m.UserId = GetUserIdByName(userName);
-            if (m.UserId != null &&
-                db.DocumentMembers.FirstOrDefault(dm => dm.UserId == m.UserId && dm.DocumentId == m.DocumentId) == null)
-            {
-                db.DocumentMembers.Add(m);
-                db.SaveChanges();
-
-                m.User = db.Users.First(u => u.Id == m.UserId);
-                m.Role = db.MembersRoles.First(r => r.Id == m.RoleId);
-                return m;
-            }
-            return null;
+            return documents.AddMember(m.DocumentId, userManager.GetUserId(User), m.RoleId);
         }
         [HttpPost]
-        public void DeleteMember(int documentId, string userName)
+        public async void DeleteMember(int documentId, string userName)
         {
-            string userId = GetUserIdByName(userName);
-            db.DocumentMembers.Remove(db.DocumentMembers.First(m => m.DocumentId == documentId && m.UserId == userId));
-            db.SaveChanges();
+            documents.DeleteMember((await userManager.FindByNameAsync(userName)).Id, documentId);
         }
 
         public IActionResult OtherDocuments()
         {
-            string userID = GetUserIdByName(User.Identity.Name);
-            return View(db.DocumentMembers.Where(m => m.UserId == userID).Include(m => m.Document).Include(m => m.Role));
+            return View(documents.GetUserMembers(userManager.GetUserId(User)));
         }
-
-        private string GetUserIdByName(string name) =>
-            db.Users.FirstOrDefault(u => name == u.UserName)?.Id;
-
-        private Document GetDocumentById(int id) =>
-            db.Documents.FirstOrDefault(d => d.Id == id);
-
-        private DocumentHelper GetDocHelperById(int id) =>
-            docHelpers.FirstOrDefault(d => d.DocumentId == id);
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

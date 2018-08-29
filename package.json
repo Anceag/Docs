@@ -1,0 +1,23 @@
+{
+  "name": "docs",
+  "version": "1.0.0",
+  "description": "In this application users can create, edit and delete text documents, involve other users in this process or be involved in it.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Anceag/Docs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Anceag/Docs/issues"
+  },
+  "homepage": "https://github.com/Anceag/Docs#readme",
+  "dependencies": {
+    "@aspnet/signalr": "^1.0.3"
+  }
+}

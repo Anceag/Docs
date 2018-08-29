@@ -29,8 +29,21 @@
     @*<a href="@Url.Action("DownloadDocument", "Home")/@Model.Item1.Id" download>Download</a>*@
     <a asp-action="DownloadDocument" asp-route-id="@Model.Item1.Id">Download</a>
 </div>
+
+
+
+
+
+
+
 @section Scripts{
+    <script src="~/lib/signalr/signalr.js"></script>
     <script>
+        var connection = new signalR.HubConnectionBuilder().withUrl("/docsHub").build();
+        connection.start();
+        //connection.on("ReceiveMessage", function (data) { alert(data); });
+        //connection.invoke('SendMessage', '123');
+
         var textarea = $("#textArea");
         var getTextTimer;
         var getTextWaitTime = 1000;
