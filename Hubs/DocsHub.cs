@@ -9,9 +9,9 @@ namespace Docs.Hubs
 {
     public class DocsHub : Hub
     {
-        public async Task SendMessage(string message)
+        public async Task TextChange(string message)
         {
-            await Clients.All.SendAsync("ReceiveMessage", message);
+            await Clients.Others.SendAsync("TextChange", message);
         }
     }
 }

@@ -17,8 +17,6 @@ namespace Docs.Services
     {
         private readonly DocsDbContext db;
 
-        private readonly List<DocumentHelper> docHelpers = new List<DocumentHelper>();
-
         public Documents(DocsDbContext db)
         {
             this.db = db;
@@ -53,7 +51,6 @@ namespace Docs.Services
         {
             Document doc = GetDocument(docId);
             doc.Content = content ?? string.Empty;
-            GetDocHelperById(docId).ChangingUser = null;
             db.SaveChanges();
         }
 
@@ -62,25 +59,13 @@ namespace Docs.Services
             Document doc = GetDocument(docId);
             if (docName == doc.Name)
             {
-                docHelpers.Remove(docHelpers.Find(d => d.DocumentId == docId));
                 db.Documents.Remove(doc);
                 db.SaveChanges();
                 return true;
             }
             return false;
         }
-
-        public DocumentHelper GetDocumentHelper(int docId)
-        {
-            var docHelper = docHelpers.FirstOrDefault(h => h.DocumentId == docId);
-            if (docHelper == null)
-            {
-                docHelper = new DocumentHelper(docId);
-                docHelpers.Add(docHelper);
-            }
-            return docHelper;
-        }
-
+        
         public DocumentMember GetMember(string userId, int docId)
         {
             return db.DocumentMembers.FirstOrDefault(m => m.UserId == userId && m.DocumentId == docId);
@@ -141,8 +126,5 @@ namespace Docs.Services
             ms.Position = 0;
             return ms;
         }
-
-        public DocumentHelper GetDocHelperById(int id) =>
-            docHelpers.FirstOrDefault(d => d.DocumentId == id);
     }
 }

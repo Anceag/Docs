@@ -51,23 +51,12 @@ namespace Docs.Controllers
             return View(t);
         }
 
-        public object GetDocumentInfo(int id)
-        {
-            return new { documents.GetDocument(id).Content, changingUser = documents.GetDocumentHelper(id)?.ChangingUser?.UserName };
-        }
-
         public FileResult DownloadDocument(int id)
         {
             var ms = documents.GetDocumentMemoryStream(id);
             return File(ms, "text/plain", id + ".txt");
         }
 
-        [HttpPost]
-        public async void DocumentStartChange(int id)
-        {
-            var docHelper = documents.GetDocumentHelper(id);
-            docHelper.ChangingUser = await userManager.GetUserAsync(User);
-        }
         [HttpPost]
         public void DocumentChange(int id, string content)
         {
@@ -112,14 +101,25 @@ namespace Docs.Controllers
             return View(t);
         }
         [HttpPost]
-        public DocumentMember AddMember(DocumentMember m, string userName)
+        public async Task<DocumentMember> AddMember(DocumentMember m, string userName)
         {
-            return documents.AddMember(m.DocumentId, userManager.GetUserId(User), m.RoleId);
+            string userId;
+            try
+            {
+                userId = (await userManager.FindByNameAsync(userName)).Id;
+            }
+            catch
+            {
+                return null;
+            }
+            return documents.AddMember(m.DocumentId, userId, m.RoleId);
         }
         [HttpPost]
-        public async void DeleteMember(int documentId, string userName)
+        public async Task<IActionResult> DeleteMember(int documentId, string userName)
         {
-            documents.DeleteMember((await userManager.FindByNameAsync(userName)).Id, documentId);
+            string userId = (await userManager.FindByNameAsync(userName)).Id;
+            documents.DeleteMember(userId, documentId);
+            return new EmptyResult();
         }
 
         public IActionResult OtherDocuments()

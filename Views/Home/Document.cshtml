@@ -9,13 +9,13 @@
 }
 
 <div class="docListPartName">@Model.Item1.Name</div>
+<div style="visibility: hidden" id="changesSavedText">Changes saved.</div>
 <div>
     <textarea id="textArea"
               name="text"
               @if (canEdit) { <text> oninput="textChange()" </text> }
               @if (!canEdit) { <text> disabled</text> }>@Model.Item1.Content</textarea>
 </div>
-<div style="visibility: hidden" id="changingWarning"><span id="changingUser">user_name</span> is typing.</div>
 @if (owner)
 {
     <div>
@@ -30,57 +30,26 @@
     <a asp-action="DownloadDocument" asp-route-id="@Model.Item1.Id">Download</a>
 </div>
 
-
-
-
-
-
-
 @section Scripts{
-    <script src="~/lib/signalr/signalr.js"></script>
     <script>
         var connection = new signalR.HubConnectionBuilder().withUrl("/docsHub").build();
         connection.start();
-        //connection.on("ReceiveMessage", function (data) { alert(data); });
-        //connection.invoke('SendMessage', '123');
 
         var textarea = $("#textArea");
-        var getTextTimer;
-        var getTextWaitTime = 1000;
+
+        connection.on("TextChange", function (text) { textarea.val(text); });
+
     @if (canEdit)
     {
         <text>
-        var isChanged = false;
-        var changeWaitTime = 500;
-        var changeTextTimer;
+        var sendTimeout;
+        var sendWaitTime = 500;
+        var changesSavedTimeout;
 
         function textChange() {
-            if (!isChanged) {
-                sendStartChange();
-                //console.log("started changing");
-            }
-            clearTimeout(changeTextTimer);
-            clearTimeout(getTextTimer);
-            isChanged = true;
-            changeTextTimer = setTimeout(
-                function() {
-                    isChanged = false;
-                    sendText();
-                    //console.log("changes saved");
-                    setGetTextTimer();
-                },
-                changeWaitTime
-            );
-        }
-
-        function sendStartChange() {
-             $.ajax({
-                url: "@Url.Action("DocumentStartChange", "Home")",
-                type: "POST",
-                data: {
-                    id: @Model.Item1.Id
-                }
-            });
+            clearTimeout(sendTimeout);
+            sendTimeout = setTimeout(sendText, sendWaitTime);
+            connection.invoke("TextChange", textarea.val());
         }
 
         function sendText() {
@@ -90,36 +59,19 @@
                 data: {
                     id: @Model.Item1.Id,
                     content: textarea.val()
-                }
+                },
+                success: showChangesSaved
             });
+        }
+
+        function showChangesSaved() {
+            $("#changesSavedText").css("visibility", "visible");
+            clearTimeout(changesSavedTimeout);
+            changesSavedTimeout = setTimeout(function () {
+                $("#changesSavedText").css("visibility", "hidden");
+            }, 1500);
         }
         </text>
     }
-
-        $(function () {
-            setGetTextTimer();
-        });
-        function setGetTextTimer() {
-            getTextTimer = setInterval(getText, getTextWaitTime);
-        }
-        function getText() {
-            $.ajax({
-                url: '@Url.Action("GetDocumentInfo", "Home")',
-                type: 'GET',
-                data: { id: @Model.Item1.Id },
-                success: function (data) {
-                    if (data.changingUser != null) {
-                        textarea.attr("disabled", true);
-                        $("#changingWarning").css("visibility", "visible");
-                        $("#changingUser").text(data.changingUser);
-                    } else if("@canEdit" == "True") {
-                        textarea.attr("disabled", false);
-                        $("#changingWarning").css("visibility", "hidden");
-                    }
-                    textarea.val(data.content);
-                    //console.log("new text received");
-                }
-            });
-        }
     </script>
 }

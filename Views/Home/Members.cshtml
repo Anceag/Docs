@@ -61,7 +61,9 @@
         function createMembersTable() {
             @foreach (var member in Model.Item2)
             {
-                <text>addMemberRow({ userName: "@member.User.UserName", roleName: "@member.Role.Name" });</text>
+                <text>
+                addMemberRow({ userName: "@member.User.UserName", roleName: "@member.Role.Name" });
+                </text>
             }
         }
         function addMemberRow(data) {
@@ -78,7 +80,7 @@
                     documentId: @Model.Item1,
                     userName: userName
                 },
-                success: function (data) {
+                success: function () {
                     $("[id='member" + userName + "']").remove();
                 }
             });
