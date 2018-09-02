@@ -31,7 +31,9 @@ namespace Docs.Services
 
         public Document GetDocument(int docId)
         {
-            return db.Documents.FirstOrDefault(d => d.Id == docId);
+            return db.Documents
+                .Include(d => d.User)
+                .FirstOrDefault(d => d.Id == docId);
         }
 
         public Document AddDocument(string docName, string userId)
@@ -68,7 +70,11 @@ namespace Docs.Services
         
         public DocumentMember GetMember(string userId, int docId)
         {
-            return db.DocumentMembers.FirstOrDefault(m => m.UserId == userId && m.DocumentId == docId);
+            return db.DocumentMembers
+                .Include(m => m.User)
+                .Include(m => m.Document)
+                .Include(m => m.Role)
+                .FirstOrDefault(m => m.UserId == userId && m.DocumentId == docId);
         }
 
         public DocumentMember AddMember(int docId, string userId, int roleId)

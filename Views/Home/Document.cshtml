@@ -16,6 +16,7 @@
               @if (canEdit) { <text> oninput="textChange()" </text> }
               @if (!canEdit) { <text> disabled</text> }>@Model.Item1.Content</textarea>
 </div>
+<div id="onlineUsersList"></div>
 @if (owner)
 {
     <div>
@@ -32,19 +33,43 @@
 
 @section Scripts{
     <script>
-        var connection = new signalR.HubConnectionBuilder().withUrl("/docsHub").build();
-        connection.start();
+        let connection = new signalR.HubConnectionBuilder()
+            .withUrl("/docsHub")
+            .build();
+        connection.start().then(function () {
+            connection.invoke("JoinDocument", "@Model.Item1.Id");
+        });
 
-        var textarea = $("#textArea");
+        let textarea = $("#textArea");
 
         connection.on("TextChange", function (text) { textarea.val(text); });
+        connection.on("ChangeOnlineUsers", changeOnlineUsersList);
+        
+        window.onunload = function () {
+            connection.invoke("LeaveDocument", "@Model.Item1.Id");
+        }
 
-    @if (canEdit)
-    {
+        @{
+            string curUserName = Model.Item2 != null ? Model.Item2.User.UserName : Model.Item1.User.UserName;
+        }
+            function changeOnlineUsersList(userNamesList) {
+                let onlineUsersList = document.getElementById("onlineUsersList");
+                onlineUsersList.innerHTML = "";
+                for (let i = 0; i < userNamesList.length; i++) {
+                    if (userNamesList[i] == "@curUserName")
+                        continue;
+                    let userDiv = document.createElement("div");
+                    userDiv.innerHTML = userNamesList[i];
+                    onlineUsersList.appendChild(userDiv);
+                }
+            }
+
+            @if (canEdit)
+            {
         <text>
-        var sendTimeout;
-        var sendWaitTime = 500;
-        var changesSavedTimeout;
+        let sendTimeout;
+        let sendWaitTime = 500;
+        let changesSavedTimeout;
 
         function textChange() {
             clearTimeout(sendTimeout);

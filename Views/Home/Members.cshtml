@@ -38,7 +38,7 @@
 @section Scripts{
     <script>
         function addMember() {
-            var roleSelect = document.getElementById("roleSelect");
+            let roleSelect = document.getElementById("roleSelect");
             $.ajax({
                 url: "@Url.Action("AddMember", "Home")",
                 type: "POST",

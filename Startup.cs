@@ -16,6 +16,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Docs.Hubs;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Docs
 {
@@ -50,7 +52,7 @@ namespace Docs
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequiredLength = 6;
             }).AddEntityFrameworkStores<DocsDbContext>();
-
+            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSignalR();
 
@@ -75,13 +77,12 @@ namespace Docs
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
+            
+            app.UseAuthentication();
             app.UseSignalR(routes =>
             {
                 routes.MapHub<DocsHub>("/docsHub");
             });
-
-            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
