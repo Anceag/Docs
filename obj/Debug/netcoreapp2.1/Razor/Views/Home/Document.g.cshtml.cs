@@ -133,7 +133,7 @@ using Docs.Models;
             WriteLiteral("    <div>\r\n        ");
             EndContext();
             BeginContext(616, 72, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "59fdbe5e8254406dacafb6b658de1625", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "e577db8710064d98a1d32d555bb479ca", async() => {
                 BeginContext(678, 6, true);
                 WriteLiteral("Delete");
                 EndContext();
@@ -168,7 +168,7 @@ using Docs.Models;
             WriteLiteral("\r\n    </div>\r\n    <div>\r\n        ");
             EndContext();
             BeginContext(721, 66, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "19626014708e436abb16117e2852bb1d", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "b6e8b0376e6947fdb969b3713655e308", async() => {
                 BeginContext(776, 7, true);
                 WriteLiteral("Members");
                 EndContext();
@@ -214,7 +214,7 @@ using Docs.Models;
             WriteLiteral("    ");
             EndContext();
             BeginContext(912, 76, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "02e38d40d9e14d17baf672fa2cc809db", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "b076e5643fcb4643bd10e8f97556d7ca", async() => {
                 BeginContext(976, 8, true);
                 WriteLiteral("Download");
                 EndContext();

@@ -42,7 +42,8 @@ namespace Docs
 
             services.AddDbContext<DocsDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("DefaultConnection")
+                    .Replace("|DBFolder|", Environment.CurrentDirectory + "\\Data")));
 
             services.AddDefaultIdentity<IdentityUser>(options =>
             {
