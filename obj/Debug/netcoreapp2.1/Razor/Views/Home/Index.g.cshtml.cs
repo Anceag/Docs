@@ -83,7 +83,7 @@ WriteAttributeValue("", 205, Url.Action("Create", "Home"), 205, 29, false);
             WriteLiteral("    <div class=\"docListPart\">\r\n        <div class=\"docListPartName\">\r\n            ");
             EndContext();
             BeginContext(368, 61, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "be6a47b2bb05482f8938ff411eb9a19f", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "9976f05b561f4ac4b6f53db08f19f7c0", async() => {
                 BeginContext(417, 8, false);
 #line 14 "E:\Other\nure\GL\Docs\Docs\Views\Home\Index.cshtml"
                                                        Write(doc.Name);

@@ -1,102 +1,49 @@
-﻿@{
-    ViewData["Title"] = "Document";
-}
-@model Tuple<Document, DocumentMember>
+﻿@model Docs.Models.ViewModels.DocumentViewModel
 
 @{
-    bool owner = Model.Item2 == null;
-    bool canEdit = owner || Model.Item2.Role.Edit;
+    ViewData["Title"] = "Document";
+
+    bool owner = Model.Member == null;
+    bool canEdit = owner || Model.Member.Role.Edit;
 }
 
-<div class="docListPartName">@Model.Item1.Name</div>
+<div class="docListPartName">@Model.Document.Name</div>
 <div style="visibility: hidden" id="changesSavedText">Changes saved.</div>
 <div>
     <textarea id="textArea"
               name="text"
               @if (canEdit) { <text> oninput="textChange()" </text> }
-              @if (!canEdit) { <text> disabled</text> }>@Model.Item1.Content</textarea>
+              @if (!canEdit) { <text> disabled</text> }>@Model.Document.Content</textarea>
 </div>
 <div id="onlineUsersList"></div>
 @if (owner)
 {
     <div>
-        <a asp-action="DeleteDocument" asp-route-id="@Model.Item1.Id">Delete</a>
+        <a asp-action="DeleteDocument" asp-route-id="@Model.Document.Id">Delete</a>
     </div>
     <div>
-        <a asp-action="Members" asp-route-id="@Model.Item1.Id">Members</a>
+        <a asp-action="Members" asp-route-id="@Model.Document.Id">Members</a>
     </div>
 }
 <div>
     @*<a href="@Url.Action("DownloadDocument", "Home")/@Model.Item1.Id" download>Download</a>*@
-    <a asp-action="DownloadDocument" asp-route-id="@Model.Item1.Id">Download</a>
+    <a asp-action="DownloadDocument" asp-route-id="@Model.Document.Id">Download</a>
 </div>
 
 @section Scripts{
     <script>
-        let connection = new signalR.HubConnectionBuilder()
-            .withUrl("/docsHub")
-            .build();
-        connection.start().then(function () {
-            connection.invoke("JoinDocument", "@Model.Item1.Id");
-        });
-
-        let textarea = $("#textArea");
-
-        connection.on("TextChange", function (text) { textarea.val(text); });
-        connection.on("ChangeOnlineUsers", changeOnlineUsersList);
-        
-        window.onunload = function () {
-            connection.invoke("LeaveDocument", "@Model.Item1.Id");
-        }
-
+        let docId = @Model.Document.Id;
+        let documentChangeUrl = "@Url.Action("DocumentChange", "Home")";
         @{
-            string curUserName = Model.Item2 != null ? Model.Item2.User.UserName : Model.Item1.User.UserName;
+            string curUserName = Model.Member != null ? Model.Member.User.UserName : Model.Document.User.UserName;
         }
-            function changeOnlineUsersList(userNamesList) {
-                let onlineUsersList = document.getElementById("onlineUsersList");
-                onlineUsersList.innerHTML = "";
-                for (let i = 0; i < userNamesList.length; i++) {
-                    if (userNamesList[i] == "@curUserName")
-                        continue;
-                    let userDiv = document.createElement("div");
-                    userDiv.innerHTML = userNamesList[i];
-                    onlineUsersList.appendChild(userDiv);
-                }
-            }
-
-            @if (canEdit)
-            {
-        <text>
-        let sendTimeout;
-        let sendWaitTime = 500;
-        let changesSavedTimeout;
-
-        function textChange() {
-            clearTimeout(sendTimeout);
-            sendTimeout = setTimeout(sendText, sendWaitTime);
-            connection.invoke("TextChange", textarea.val());
-        }
-
-        function sendText() {
-            $.ajax({
-                url: "@Url.Action("DocumentChange", "Home")",
-                type: "POST",
-                data: {
-                    id: @Model.Item1.Id,
-                    content: textarea.val()
-                },
-                success: showChangesSaved
-            });
-        }
-
-        function showChangesSaved() {
-            $("#changesSavedText").css("visibility", "visible");
-            clearTimeout(changesSavedTimeout);
-            changesSavedTimeout = setTimeout(function () {
-                $("#changesSavedText").css("visibility", "hidden");
-            }, 1500);
-        }
-        </text>
-    }
+        let curUserName = "@curUserName";
     </script>
+    <script src="~/js/Document.js"></script>
+    @if (canEdit)
+    {
+    <text>
+        <script src="~/js/DocumentEdit.js"></script>
+    </text>
+    }
 }

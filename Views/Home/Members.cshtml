@@ -1,4 +1,4 @@
-﻿@model Tuple<int, IEnumerable<DocumentMember>, IEnumerable<Role>>
+﻿@model Docs.Models.ViewModels.MembersViewModel
 
 @{
     ViewData["Title"] = "Members";
@@ -7,7 +7,7 @@
 <h2>Members</h2>
 
 <div>
-    <a asp-action="Document" asp-route-id="@Model.Item1">Back to document</a>
+    <a asp-action="Document" asp-route-id="@Model.DocumentId">Back to document</a>
 </div>
 <br />
 <div class="row">
@@ -16,7 +16,7 @@
         <input type="text" id="userName" class="form-control" />
         <label>Role</label>
         <select id="roleSelect" class="form-control" style="margin-bottom: 10px">
-            @foreach (Role r in Model.Item3)
+            @foreach (Role r in Model.Roles)
             {
                 <option value="@r.Id">@r.Name</option>
             }
@@ -37,73 +37,24 @@
 
 @section Scripts{
     <script>
-
-
-        function addMember() {
-            let roleSelect = document.getElementById("roleSelect");
-            $.ajax({
-                url: "@Url.Action("AddMember", "Home")",
-                type: "POST",
-                data: {
-                    documentId: @Model.Item1,
-                    userName: document.getElementById("userName").value,
-                    roleId: roleSelect.options[roleSelect.options.selectedIndex].value
-                },
-                success: function (data) {
-                    if (data != undefined)
-                        addMemberRow({ userName: data.user.userName, roleName: data.role.name });
-                }
-            });
-        }
-
+        let docId = @Model.DocumentId;
+        let addMemberUrl = "@Url.Action("AddMember", "Home")";
+        let deleteMemberUrl = "@Url.Action("DeleteMember", "Home")";
+    </script>
+    <script src="~/js/Members.js"></script>
+    <script>
         $(function () {
             createMembersTable();
         });
 
         function createMembersTable() {
-            @foreach (var member in Model.Item2)
+            @foreach (var member in Model.Members)
             {
                 <text>
                 addMemberRow({ userName: "@member.User.UserName", roleName: "@member.Role.Name" });
                 </text>
             }
         }
-        function addMemberRow(data) {
-            let tr = document.createElement("tr");
-            document.getElementById("membersTable").appendChild(tr);
-            tr.setAttribute("id", "member" + data.userName);
-
-            let td1 = document.createElement("td");
-            tr.appendChild(td1);
-            td1.innerHTML = data.userName;
-
-            let td2 = document.createElement("td");
-            tr.appendChild(td2);
-            td2.innerHTML = data.roleName;
-
-            let td3 = document.createElement("td");
-            tr.appendChild(td3);
-            let delBtn = document.createElement("input");
-            td3.appendChild(delBtn);
-            delBtn.setAttribute("type", "button");
-            delBtn.setAttribute("class", "btn btn-default");
-            delBtn.setAttribute("value", "Delete");
-            delBtn.setAttribute("onclick", "deleteMember('" + data.userName + "')");
-        }
-
-        function deleteMember(userName) {
-            $.ajax({
-                url: "@Url.Action("DeleteMember", "Home")",
-                type: "POST",
-                data: {
-                    documentId: @Model.Item1,
-                    userName: userName
-                },
-                success: function () {
-                    let element = document.getElementById("member" + userName);
-                    element.parentNode.removeChild(element);
-                }
-            });
-        }
+        
     </script>
 }

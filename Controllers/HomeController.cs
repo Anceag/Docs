@@ -7,11 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Docs.Models;
 using Docs.Data;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using System.IO;
-using Microsoft.AspNetCore.SignalR;
 using Docs.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Docs.Models.ViewModels;
 
 namespace Docs.Controllers
 {
@@ -46,9 +44,7 @@ namespace Docs.Controllers
                     return NotFound();
                 member.Role = documents.GetRole(member.RoleId);
             }
-
-            var t = new Tuple<Document, DocumentMember>(doc, member);
-            return View(t);
+            return View(new DocumentViewModel() { Document = doc, Member = member });
         }
 
         public FileResult DownloadDocument(int id)
@@ -95,10 +91,12 @@ namespace Docs.Controllers
         [HttpGet]
         public IActionResult Members(int id)
         {
-            var t = new Tuple<int, IEnumerable<DocumentMember>, IEnumerable<Role>>(id,
-                documents.GetDocumentMembers(id),
-                documents.Roles);
-            return View(t);
+            return View(new MembersViewModel()
+            {
+                DocumentId = id,
+                Members = documents.GetDocumentMembers(id),
+                Roles = documents.Roles
+            });
         }
         [HttpPost]
         public async Task<DocumentMember> AddMember(DocumentMember m, string userName)
