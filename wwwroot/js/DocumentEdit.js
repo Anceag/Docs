@@ -1,5 +1,5 @@
 ﻿let sendTimeout;
-let sendWaitTime = 500;
+const sendWaitTime = 500;
 let changesSavedTimeout;
 
 function textChange() {

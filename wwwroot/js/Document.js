@@ -1,4 +1,6 @@
-﻿
+﻿let textChangeTimeout;
+const textChangeWaitTime = 500;
+
 let connection = new signalR.HubConnectionBuilder()
     .withUrl("/docsHub")
     .build();
@@ -8,11 +10,20 @@ connection.start().then(function () {
 
 let textarea = $("#textArea");
 
-connection.on("TextChange", function (text) { textarea.val(text); });
+connection.on("TextChange", changeText);
 connection.on("ChangeOnlineUsers", changeOnlineUsersList);
 
 window.onunload = function () {
     connection.invoke("LeaveDocument", docId.toString());
+}
+
+function changeText(text) {
+    textarea.prop("disabled", true);
+    clearTimeout(textChangeTimeout);
+    textChangeTimeout = setTimeout(function () {
+        textarea.prop("disabled", false);
+    }, textChangeWaitTime);
+    textarea.val(text);
 }
 
 function changeOnlineUsersList(userNamesList) {
