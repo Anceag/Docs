@@ -17,7 +17,7 @@ window.onunload = function () {
 
 function changeOnlineUsersList(userNamesList) {
     let onlineUsersList = document.getElementById("onlineUsersList");
-    onlineUsersList.innerHTML = "";
+    onlineUsersList.innerHTML = userNamesList.length > 1 ? "" : "no members online";
     for (let i = 0; i < userNamesList.length; i++) {
         if (userNamesList[i] == curUserName)
             continue;

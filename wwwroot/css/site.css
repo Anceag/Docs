@@ -44,11 +44,9 @@
 }
 
 .docListPart {
-    border-bottom: 2px outset lightgrey;
-    border-top: 2px inset lightgrey;
-    border-radius: 5px;
+    border: 2px lightgray solid;
+    box-shadow: 1px 2px 2px grey;
     margin-top: 5px;
-    width: 350px;
 }
 
 .docListPartName {
@@ -61,3 +59,61 @@
     overflow: hidden;
     padding-left: 5px;
 }
+
+#textArea {
+    min-width: 100%;
+    max-width: 100%;
+    min-height: 350px;
+    border: 2px lightgray solid;
+    box-shadow: 0px 0px 10px grey;
+}
+
+    #textArea:disabled {
+        background-color: #fafafa;
+    }
+
+    #textArea:enabled {
+        outline: none;
+    }
+
+#navBar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+.navBarElem {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: #000;
+    padding: 10px 16px;
+    text-decoration: none;
+    color: white;
+}
+
+    li a:hover {
+        background-color: #555;
+        color: white;
+        text-decoration: none;
+    }
+
+    li a:active {
+        text-decoration: none;
+        color: white;
+    }
+
+    li a:visited {
+        text-decoration: none;
+        color: white;
+    }
+
+    li a:focus {
+        background-color: #555;
+        color: white;
+        text-decoration: none;
+    }

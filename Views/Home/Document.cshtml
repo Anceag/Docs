@@ -7,27 +7,35 @@
     bool canEdit = owner || Model.Member.Role.Edit;
 }
 
-<div class="docListPartName">@Model.Document.Name</div>
+<div class="docListPartName" style="margin: 5px 0 10px">@Model.Document.Name</div>
+<ul id="navBar">
+    <li class="navBarElem">
+        <a asp-action="DownloadDocument" asp-route-id="@Model.Document.Id">Download</a>
+    </li>
+    @if (owner)
+    {
+        <li class="navBarElem">
+            <a asp-action="Members" asp-route-id="@Model.Document.Id">Members</a>
+        </li>
+        <li class="navBarElem">
+            <a asp-action="DeleteDocument" asp-route-id="@Model.Document.Id">Delete</a>
+        </li>
+    }
+</ul>
 <div style="visibility: hidden" id="changesSavedText">Changes saved.</div>
-<div>
-    <textarea id="textArea"
-              name="text"
-              @if (canEdit) { <text> oninput="textChange()" </text> }
-              @if (!canEdit) { <text> disabled</text> }>@Model.Document.Content</textarea>
-</div>
-<div id="onlineUsersList"></div>
-@if (owner)
-{
-    <div>
-        <a asp-action="DeleteDocument" asp-route-id="@Model.Document.Id">Delete</a>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <textarea id="textArea"
+                      name="text"
+                      @if (canEdit) { <text> oninput="textChange()" </text> }
+                      @if (!canEdit) { <text> disabled</text> }>@Model.Document.Content</textarea>
+        </div>
+        <div class="col-md-4" style="border-left: 2px solid gray;">
+            <span style="font-size: 20px">Online members:</span>
+            <div id="onlineUsersList" style="max-height: 320px; min-height: 320px; overflow: auto;"></div>
+        </div>
     </div>
-    <div>
-        <a asp-action="Members" asp-route-id="@Model.Document.Id">Members</a>
-    </div>
-}
-<div>
-    @*<a href="@Url.Action("DownloadDocument", "Home")/@Model.Item1.Id" download>Download</a>*@
-    <a asp-action="DownloadDocument" asp-route-id="@Model.Document.Id">Download</a>
 </div>
 
 @section Scripts{
@@ -42,8 +50,8 @@
     <script src="~/js/Document.js"></script>
     @if (canEdit)
     {
-    <text>
-        <script src="~/js/DocumentEdit.js"></script>
-    </text>
+        <text>
+            <script src="~/js/DocumentEdit.js"></script>
+        </text>
     }
 }

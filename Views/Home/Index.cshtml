@@ -6,15 +6,16 @@
 <div id="docListUpper">
     <input type="button" class="btn btn-default" value="Create new document" onclick="location.href = '@Url.Action("Create", "Home")'">
 </div>
-
-@foreach (Document doc in Model)
-{
-    <div class="docListPart">
-        <div class="docListPartName">
-            <a asp-action="Document" asp-route-id="@doc.Id">@doc.Name</a>
+<div class="row">
+    @foreach (Document doc in Model)
+    {
+        <div class="docListPart col-md-8">
+            <div class="docListPartName">
+                <a asp-action="Document" asp-route-id="@doc.Id">@doc.Name</a>
+            </div>
+            <div class="docListPartText">
+                <span style="white-space: pre-wrap">@doc.Content</span>
+            </div>
         </div>
-        <div class="docListPartText">
-            <span style="white-space: pre-wrap">@doc.Content</span>
-        </div>
-    </div>
-}
+    }
+</div>
