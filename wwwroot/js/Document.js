@@ -11,6 +11,7 @@ connection.start().then(function () {
 let textarea = $("#textArea");
 
 connection.on("TextChange", changeText);
+connection.on("NameChange", changeName);
 connection.on("ChangeOnlineUsers", changeOnlineUsersList);
 
 window.onunload = function () {
@@ -24,6 +25,10 @@ function changeText(text) {
         textarea.prop("disabled", false);
     }, textChangeWaitTime);
     textarea.val(text);
+}
+
+function changeName(name) {
+    document.getElementById("docName").innerHTML = name;
 }
 
 function changeOnlineUsersList(userNamesList) {

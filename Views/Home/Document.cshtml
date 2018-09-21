@@ -7,7 +7,11 @@
     bool canEdit = owner || Model.Member.Role.Edit;
 }
 
-<div class="docListPartName" style="margin: 5px 0 10px">@Model.Document.Name</div>
+<div class="docListPartName" style="margin: 5px 0 10px">
+    <span id="docName">@Model.Document.Name</span>
+    @if (canEdit) { <span class="glyphicon glyphicon-pencil" onclick="docNameChange()"></span> }
+</div>
+    
 <ul id="navBar">
     <li class="navBarElem">
         <a asp-action="DownloadDocument" asp-route-id="@Model.Document.Id">Download</a>
@@ -42,6 +46,7 @@
     <script>
         let docId = @Model.Document.Id;
         let documentChangeUrl = "@Url.Action("DocumentChange", "Home")";
+        let documentNameChangeUrl = "@Url.Action("DocumentNameChange", "Home")";
         @{
             string curUserName = Model.Member != null ? Model.Member.User.UserName : Model.Document.User.UserName;
         }

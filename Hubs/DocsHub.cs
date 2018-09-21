@@ -13,9 +13,9 @@ namespace Docs.Hubs
     {
         private static readonly DocumentMapper mapper = new DocumentMapper();
 
-        public async Task TextChange(string message)
+        public async Task TextChange(string text)
         {
-            await Clients.Others.SendAsync("TextChange", message);
+            await Clients.Others.SendAsync("TextChange", text);
         }
 
         public async Task JoinDocument(int docId)
@@ -28,6 +28,11 @@ namespace Docs.Hubs
             mapper.RemoveUser(docId, Context.User.Identity.Name);
             await SendChangeOnlineUsers(docId);
         }
+        public async Task NameChange(string name)
+        {
+            await Clients.Others.SendAsync("NameChange", name);
+        }
+
         private Task SendChangeOnlineUsers(int docId) =>
             Clients.All.SendAsync("ChangeOnlineUsers", mapper.GetUsers(docId));
     }

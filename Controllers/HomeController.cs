@@ -59,6 +59,12 @@ namespace Docs.Controllers
             documents.SetDocumentContent(id, content);
         }
 
+        [HttpPost]
+        public void DocumentNameChange(int id, string name)
+        {
+            documents.SetDocumentName(id, name);
+        }
+
         [HttpGet]
         public IActionResult DeleteDocument(int id)
         {

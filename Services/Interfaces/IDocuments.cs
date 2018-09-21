@@ -16,6 +16,7 @@ namespace Docs.Services.Interfaces
         Document GetDocument(int docId);
         Document AddDocument(string docName, string userId);
         void SetDocumentContent(int docId, string content);
+        void SetDocumentName(int docId, string name);
         bool DeleteDocument(string docName, int docId);
         DocumentMember GetMember(string userId, int docId);
         DocumentMember AddMember(int docId, string userId, int roleId);

@@ -56,6 +56,13 @@ namespace Docs.Services
             db.SaveChanges();
         }
 
+        public void SetDocumentName(int docId, string name)
+        {
+            Document doc = GetDocument(docId);
+            doc.Name = name ?? "noName";
+            db.SaveChanges();
+        }
+
         public bool DeleteDocument(string docName, int docId)
         {
             Document doc = GetDocument(docId);

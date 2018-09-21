@@ -58,6 +58,11 @@ namespace Docs
             services.AddSignalR();
 
             var db = services.BuildServiceProvider().GetService<DocsDbContext>();
+            if(db.MembersRoles.FirstOrDefault(r => r.Name == "View") != null)
+                db.MembersRoles.Add(new Models.Role() { Name = "View", Edit = false });
+            if (db.MembersRoles.FirstOrDefault(r => r.Name == "Edit") != null)
+                db.MembersRoles.Add(new Models.Role() { Name = "Edit", Edit = true });
+            db.SaveChanges();
             services.AddSingleton<IDocuments, Documents>(s => new Documents(db));
         }
 
