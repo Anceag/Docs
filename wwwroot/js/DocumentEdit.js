@@ -2,10 +2,61 @@
 const sendWaitTime = 500;
 let changesSavedTimeout;
 
+let docInput = { selStart: 0, selEnd: 0, text: "" };
+let prevText, pasted = false;
+textarea.keydown(keyDown);
+textarea.on("cut", docCut);
+textarea.on("paste", docPaste);
+
+function keyDown(e) {
+    console.log(e.key);
+
+    docInput.selStart = textarea.prop("selectionStart");
+    docInput.selEnd = textarea.prop("selectionEnd");
+    docInput.text = e.key;
+
+    if (e.key == "Tab") {
+        e.preventDefault();
+        docInput.text = "";
+    }
+    else if (e.key == "Backspace") {
+        if (docInput.selStart == docInput.selEnd)
+            docInput.selStart--;
+        docInput.text = "";
+    }
+    else if (e.key == "Delete") {
+        if (docInput.selStart == docInput.selEnd)
+            docInput.selEnd++;
+        docInput.text = "";
+    }
+    else if (e.ctrlKey && (e.key == "z" || e.key == "Z")) {
+        e.preventDefault();
+    }
+}
+
+function docCut() {
+    docInput.selStart = textarea.prop("selectionStart");
+    docInput.selEnd = textarea.prop("selectionEnd");
+    docInput.text = "";
+}
+
+function docPaste() {
+    docInput.selStart = textarea.prop("selectionStart");
+    docInput.selEnd = textarea.prop("selectionEnd");
+    prevText = textarea.val();
+    pasted = true;
+}
+
 function textChange() {
-    clearTimeout(sendTimeout);
-    sendTimeout = setTimeout(sendText, sendWaitTime);
-    connection.invoke("TextChange", textarea.val());
+    if (pasted) {
+        pasted = false;
+        curText = textarea.val();
+        docInput.text = curText.substr(docInput.selStart, curText.length - prevText.length + docInput.selEnd - docInput.selStart);
+    }
+
+    if (sendTimeout == null)
+        sendTimeout = setTimeout(sendText, sendWaitTime);
+    connection.invoke("TextChange", docId, docInput);
 }
 
 function sendText() {
@@ -18,6 +69,7 @@ function sendText() {
         },
         success: showChangesSaved
     });
+    sendTimeout = null;
 }
 
 function showChangesSaved() {
@@ -45,7 +97,7 @@ function docNameChange() {
                 name: docNameInput.val()
             }
         });
-        connection.invoke("NameChange", docNameInput.val());
+        connection.invoke("NameChange", docId, docNameInput.val());
     });
     docNameInput.focusout(function () {
         let docNameInput1 = $("#docName");

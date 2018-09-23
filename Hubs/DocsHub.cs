@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Docs.Hubs.DocumentHubMapper;
 
 namespace Docs.Hubs
 {
@@ -13,14 +14,16 @@ namespace Docs.Hubs
     {
         private static readonly DocumentMapper mapper = new DocumentMapper();
 
-        public async Task TextChange(string text)
+        public async Task TextChange(int docId, object docInput)
         {
-            await Clients.Others.SendAsync("TextChange", text);
+            await Clients.Users(mapper.GetUsers(docId).Select(u => u.Id)
+                .Except(new string[] { Context.UserIdentifier })
+                .ToList()).SendAsync("TextChange", docInput);
         }
 
         public async Task JoinDocument(int docId)
         {
-            mapper.AddUser(docId, Context.User.Identity.Name);
+            mapper.AddUser(docId, new DocumentMapperUser() { Name = Context.User.Identity.Name, Id = Context.UserIdentifier });
             await SendChangeOnlineUsers(docId);
         }
         public async Task LeaveDocument(int docId)
@@ -28,12 +31,22 @@ namespace Docs.Hubs
             mapper.RemoveUser(docId, Context.User.Identity.Name);
             await SendChangeOnlineUsers(docId);
         }
-        public async Task NameChange(string name)
+        public async Task NameChange(int docId, string name)
         {
-            await Clients.Others.SendAsync("NameChange", name);
+            await Clients.Users(mapper.GetUsers(docId).Select(u => u.Id)
+                .Except(new string[] { Context.UserIdentifier })
+                .ToList()).SendAsync("NameChange", name);
         }
 
-        private Task SendChangeOnlineUsers(int docId) =>
-            Clients.All.SendAsync("ChangeOnlineUsers", mapper.GetUsers(docId));
+        public override Task OnDisconnectedAsync(Exception exception)
+        {
+            base.OnDisconnectedAsync(exception);
+            int docId = mapper.FindDocumentIdByUserName(Context.User.Identity.Name);
+            return LeaveDocument(docId);
+        }
+
+        private async Task SendChangeOnlineUsers(int docId) =>
+            await Clients.Users(mapper.GetUsers(docId).Select(u => u.Id).ToList())
+            .SendAsync("ChangeOnlineUsers", mapper.GetUsers(docId).Select(u => u.Name));
     }
 }

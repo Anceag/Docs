@@ -8,22 +8,23 @@ connection.start().then(function () {
     connection.invoke("JoinDocument", docId.toString());
 });
 
-let textarea = $("#textArea");
-
 connection.on("TextChange", changeText);
 connection.on("NameChange", changeName);
 connection.on("ChangeOnlineUsers", changeOnlineUsersList);
 
-window.onunload = function () {
-    connection.invoke("LeaveDocument", docId.toString());
-}
-
-function changeText(text) {
+function changeText(docInput) {
     textarea.prop("disabled", true);
     clearTimeout(textChangeTimeout);
+
     textChangeTimeout = setTimeout(function () {
         textarea.prop("disabled", false);
     }, textChangeWaitTime);
+
+
+
+
+    let text = textarea.val();
+    text = text.substring(0, docInput.selStart) + docInput.text + text.substring(docInput.selEnd);
     textarea.val(text);
 }
 

@@ -9,9 +9,10 @@
 
 <div class="docListPartName" style="margin: 5px 0 10px">
     <span id="docName">@Model.Document.Name</span>
-    @if (canEdit) { <span class="glyphicon glyphicon-pencil" onclick="docNameChange()"></span> }
+    @if (canEdit)
+    {<span class="glyphicon glyphicon-pencil" onclick="docNameChange()"></span>}
 </div>
-    
+
 <ul id="navBar">
     <li class="navBarElem">
         <a asp-action="DownloadDocument" asp-route-id="@Model.Document.Id">Download</a>
@@ -32,8 +33,7 @@
         <div class="col-md-8">
             <textarea id="textArea"
                       name="text"
-                      @if (canEdit) { <text> oninput="textChange()" </text> }
-                      @if (!canEdit) { <text> disabled</text> }>@Model.Document.Content</textarea>
+                      @if (!canEdit) { <text> disabled </text> }>@Model.Document.Content</textarea>
         </div>
         <div class="col-md-4" style="border-left: 2px solid gray;">
             <span style="font-size: 20px">Online members:</span>
@@ -51,12 +51,17 @@
             string curUserName = Model.Member != null ? Model.Member.User.UserName : Model.Document.User.UserName;
         }
         let curUserName = "@curUserName";
+
+        let textarea = $("#textArea");
     </script>
     <script src="~/js/Document.js"></script>
     @if (canEdit)
     {
         <text>
             <script src="~/js/DocumentEdit.js"></script>
+            <script>
+                textarea.on("input", textChange);
+            </script>
         </text>
     }
 }

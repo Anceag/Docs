@@ -63,7 +63,7 @@ namespace Docs
             if (db.MembersRoles.FirstOrDefault(r => r.Name == "Edit") == null)
                 db.MembersRoles.Add(new Models.Role() { Name = "Edit", Edit = true });
             db.SaveChanges();
-            services.AddSingleton<IDocuments, Documents>(s => new Documents(db));
+            services.AddScoped<IDocuments, Documents>(s => new Documents(db));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
