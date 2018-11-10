@@ -53,7 +53,7 @@ namespace Docs
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequiredLength = 6;
             }).AddEntityFrameworkStores<DocsDbContext>();
-            
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSignalR();
 
@@ -63,7 +63,8 @@ namespace Docs
             if (db.MembersRoles.FirstOrDefault(r => r.Name == "Edit") == null)
                 db.MembersRoles.Add(new Models.Role() { Name = "Edit", Edit = true });
             db.SaveChanges();
-            services.AddScoped<IDocuments, Documents>(s => new Documents(db));
+
+            services.AddScoped<IDocuments, Documents>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -83,7 +84,7 @@ namespace Docs
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-            
+
             app.UseAuthentication();
             app.UseSignalR(routes =>
             {

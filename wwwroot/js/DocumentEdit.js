@@ -9,8 +9,6 @@ textarea.on("cut", docCut);
 textarea.on("paste", docPaste);
 
 function keyDown(e) {
-    console.log(e.key);
-
     docInput.selStart = textarea.prop("selectionStart");
     docInput.selEnd = textarea.prop("selectionEnd");
     docInput.text = e.key;
@@ -31,6 +29,9 @@ function keyDown(e) {
     }
     else if (e.ctrlKey && (e.key == "z" || e.key == "Z")) {
         e.preventDefault();
+    }
+    else if (e.key == "Enter") {
+        docInput.text = "\n";
     }
 }
 

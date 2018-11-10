@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Docs.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Docs.Models.ViewModels;
+using Docs.Hubs;
 
 namespace Docs.Controllers
 {
@@ -123,6 +124,7 @@ namespace Docs.Controllers
         {
             string userId = (await userManager.FindByNameAsync(userName)).Id;
             documents.DeleteMember(userId, documentId);
+            DocsHub.LeaveDocumentStatic(documentId, userName);
             return new EmptyResult();
         }
 

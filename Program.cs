@@ -14,6 +14,9 @@ namespace Docs
     {
         public static void Main(string[] args)
         {
+            int a = 4;
+            object o = a;
+            short b = (short)o;
             CreateWebHostBuilder(args).Build().Run();
         }
 
