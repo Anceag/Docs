@@ -16,7 +16,7 @@ namespace Docs
         {
             int a = 4;
             object o = a;
-            short b = (short)o;
+            short b = (short)(int)o;
             CreateWebHostBuilder(args).Build().Run();
         }
 
